@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCPRAW — Servers</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background: #0c1222; color: #e2e8f0; min-height: 100vh; }
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid #1e3a5f;
+    background: #0f172a;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-title { font-size: 20px; font-weight: 600; color: #e2e8f0; }
+.back-link { color: #7dd3fc; text-decoration: none; font-size: 14px; }
+.back-link:hover { text-decoration: underline; color: #bae6fd; }
+.go-badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+    border-radius: 8px; background: #1e293b; color: #7dd3fc; text-decoration: none;
+    font-size: 14px; font-weight: 500; border: 1px solid #334155;
+}
+.go-badge:hover { background: #334155; color: #bae6fd; }
+.go-badge img { display: block; filter: brightness(0) invert(1); opacity: 0.9; }
+
+.main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+.main h1 { font-size: 24px; font-weight: 600; color: #f1f5f9; margin-bottom: 8px; }
+.main p { font-size: 14px; color: #94a3b8; margin-bottom: 24px; }
+
+.servers-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.servers-table th,
+.servers-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #1e3a5f;
+}
+.servers-table th {
+    font-size: 12px; font-weight: 600; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    background: #0f172a;
+}
+.servers-table tr:last-child td { border-bottom: none; }
+.servers-table td { font-size: 14px; color: #e2e8f0; }
+.servers-table .ping-ok { color: #86efac; }
+.servers-table .ping-slow { color: #fde047; }
+.servers-table .ping-fail { color: #f87171; }
+.servers-table .ping-pending { color: #64748b; }
+
+.loading { color: #94a3b8; font-size: 14px; }
+.error { color: #f87171; font-size: 14px; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-left">
+        <a href="index.html" class="back-link">← Back</a>
+        <span class="header-title">TCPRAW</span>
+    </div>
+    <a href="https://github.com/hdmain/rawuploader" target="_blank" rel="noopener" class="go-badge" title="Backend written in Go">
+        <img src="https://go.dev/images/go-logo-blue.svg" alt="Go" width="32" height="32">
+        <span>Backend in Go</span>
+    </a>
+</header>
+
+<main class="main">
+    <h1>Servers</h1>
+    <p>List from <a href="https://raw.githubusercontent.com/hdmain/rawuploader/refs/heads/main/address" target="_blank" rel="noopener" style="color:#7dd3fc;">rawuploader/address</a>. Ping is measured against the web port (9998).</p>
+    <div id="loading" class="loading">Loading server list…</div>
+    <div id="error" class="error" style="display:none;"></div>
+    <table class="servers-table" id="table" style="display:none;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Address</th>
+                <th>Ping</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</main>
+
+<script>
+const ADDRESS_URL = 'https://raw.githubusercontent.com/hdmain/rawuploader/refs/heads/main/address';
+const PING_TIMEOUT_MS = 8000;
+
+function parseAddress(text) {
+    return text
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => {
+            const parts = line.split(':');
+            if (parts.length >= 3) {
+                const idx = parts[0];
+                const ip = parts[1];
+                const port = parts[2];
+                return { index: idx, ip, port, address: ip + ':' + port };
+            }
+            return null;
+        })
+        .filter(Boolean);
+}
+
+function pingServer(ip) {
+    return new Promise((resolve) => {
+        const url = `http://${ip}:9998/?_=${Date.now()}`;
+        const start = Date.now();
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), PING_TIMEOUT_MS);
+
+        fetch(url, { mode: 'no-cors', signal: controller.signal })
+            .then(() => {
+                clearTimeout(timeout);
+                resolve({ ok: true, ms: Date.now() - start });
+            })
+            .catch(() => {
+                clearTimeout(timeout);
+                resolve({ ok: false });
+            });
+    });
+}
+
+function pingClass(ms) {
+    if (ms == null) return 'ping-pending';
+    if (!ms) return 'ping-fail';
+    if (ms <= 300) return 'ping-ok';
+    if (ms <= 800) return 'ping-slow';
+    return 'ping-fail';
+}
+
+async function main() {
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const tableEl = document.getElementById('table');
+    const tbody = document.getElementById('tbody');
+
+    try {
+        const res = await fetch(ADDRESS_URL);
+        const text = await res.text();
+        const servers = parseAddress(text);
+
+        if (servers.length === 0) {
+            errorEl.textContent = 'No servers found in address file.';
+            errorEl.style.display = 'block';
+            loadingEl.style.display = 'none';
+            return;
+        }
+
+        loadingEl.style.display = 'none';
+        tableEl.style.display = 'table';
+
+        servers.forEach((s, i) => {
+            const tr = document.createElement('tr');
+            const pingCell = document.createElement('td');
+            pingCell.className = 'ping-pending';
+            pingCell.textContent = '…';
+            tr.innerHTML = `<td>${s.index}</td><td>${s.address}</td>`;
+            tr.appendChild(pingCell);
+            tbody.appendChild(tr);
+
+            pingServer(s.ip).then(({ ok, ms }) => {
+                pingCell.className = pingClass(ok ? ms : null);
+                pingCell.textContent = ok ? `${ms} ms` : 'timeout / error';
+            });
+        });
+    } catch (err) {
+        loadingEl.style.display = 'none';
+        errorEl.textContent = 'Failed to load server list: ' + err.message;
+        errorEl.style.display = 'block';
+    }
+}
+
+main();
+</script>
+
+</body>
+</html>

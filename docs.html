@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCPRAW — Docs</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body {
+    background: #0c1222;
+    color: #e2e8f0;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid #1e3a5f;
+    background: #0f172a;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-title { font-size: 20px; font-weight: 600; color: #e2e8f0; }
+.back-link {
+    color: #7dd3fc;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-link:hover { text-decoration: underline; color: #bae6fd; }
+.go-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #7dd3fc;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #334155;
+}
+.go-badge:hover { background: #334155; color: #bae6fd; }
+.go-badge img { display: block; filter: brightness(0) invert(1); opacity: 0.9; }
+
+.docs-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+.docs-page h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+}
+.docs-page .lead {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 36px;
+}
+.docs-page h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1e3a5f;
+}
+.docs-page h2:first-of-type { margin-top: 0; }
+.docs-page p {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+.code-wrap {
+    position: relative;
+    margin: 10px 0;
+}
+.docs-page code {
+    display: block;
+    padding: 12px 16px;
+    padding-right: 52px;
+    margin: 0;
+    background: #1e293b;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #7dd3fc;
+    overflow-x: auto;
+}
+.code-wrap .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+    background: #334155;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.code-wrap .copy-btn:hover {
+    color: #e2e8f0;
+    background: #475569;
+}
+.code-wrap .copy-btn.copied {
+    color: #86efac;
+}
+.docs-page code.inline {
+    display: inline;
+    padding: 2px 6px;
+    margin: 0;
+    font-size: 13px;
+}
+.docs-page ul {
+    margin: 8px 0 12px;
+    padding-left: 20px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+.docs-page li { margin-bottom: 4px; }
+.docs-page table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+}
+.docs-page th, .docs-page td {
+    padding: 10px 12px;
+    text-align: left;
+    border: 1px solid #1e3a5f;
+}
+.docs-page th {
+    background: #1e293b;
+    color: #94a3b8;
+    font-weight: 600;
+}
+.docs-page td { color: #e2e8f0; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-left">
+        <a href="index.html" class="back-link">← Back</a>
+        <span class="header-title">TCPRAW</span>
+    </div>
+    <a href="https://github.com/hdmain/rawuploader" target="_blank" rel="noopener" class="go-badge" title="Backend written in Go">
+        <img src="https://go.dev/images/go-logo-blue.svg" alt="Go" width="32" height="32">
+        <span>Backend in Go</span>
+    </a>
+</header>
+
+<main class="docs-page">
+    <h1>Documentation</h1>
+    <p class="lead">Installation and usage guide for rawuploader (tcpraw).</p>
+
+    <h2>Requirements</h2>
+    <p>No special requirements to run the client or server — use the <a href="https://github.com/hdmain/rawuploader" target="_blank" rel="noopener" style="color:#7dd3fc;">pre-built binaries</a> from GitHub. Go 1.21+ is only needed if you want to build the project from source yourself.</p>
+
+    <h2>Install — Linux</h2>
+    <div class="code-wrap">
+        <code id="cmd-linux">curl -sSL https://raw.githubusercontent.com/hdmain/rawuploader/main/install.sh | bash</code>
+        <button type="button" class="copy-btn" data-copy="cmd-linux">Copy</button>
+    </div>
+
+    <h2>Install — Windows</h2>
+    <p>In PowerShell (run as Administrator):</p>
+    <div class="code-wrap">
+        <code id="cmd-win">irm https://raw.githubusercontent.com/hdmain/rawuploader/main/install-win.ps1 | iex</code>
+        <button type="button" class="copy-btn" data-copy="cmd-win">Copy</button>
+    </div>
+
+    <h2>Send (upload)</h2>
+    <div class="code-wrap">
+        <code id="cmd-send">tcpraw send &lt;file&gt;</code>
+        <button type="button" class="copy-btn" data-copy="cmd-send">Copy</button>
+    </div>
+    <p>Uploads the file, encrypts it with a new 6-digit code, and prints the code. Server is chosen from the address list (first digit of code = server id).</p>
+
+    <h2>Secure send (upload with your own key)</h2>
+    <div class="code-wrap">
+        <code id="cmd-secure-send">tcpraw secure send &lt;file&gt;</code>
+        <button type="button" class="copy-btn" data-copy="cmd-secure-send">Copy</button>
+    </div>
+    <p>Encrypts the file with a 256-bit key (generated by the client). The server assigns the 6-digit code and stores data encrypted; it never sees the key. After upload you get the code and the key (64 hex chars) — without the key the file cannot be decrypted. For files &gt;500 MB data is streamed (no more than ~500 MB in RAM).</p>
+
+    <h2>Get (download)</h2>
+    <div class="code-wrap">
+        <code id="cmd-get">tcpraw get &lt;6-digit-code&gt; [-o file]</code>
+        <button type="button" class="copy-btn" data-copy="cmd-get">Copy</button>
+    </div>
+    <p>Downloads the file for the given code. For regular “send” uploads decryption uses the code. For “secure send” the program will prompt for the key (64 hex chars). Use <code class="inline">-o file</code> to set the output filename.</p>
+
+    <h2>Server</h2>
+    <div class="code-wrap">
+        <code id="cmd-server">tcpraw server -port=9999 -dir=./data</code>
+        <button type="button" class="copy-btn" data-copy="cmd-server">Copy</button>
+    </div>
+    <p>Runs the TCP server. Options:</p>
+    <ul>
+        <li><code class="inline">-port</code> — TCP port (default 9999)</li>
+        <li><code class="inline">-dir</code> — Directory for encrypted blobs (default <code class="inline">./data</code>)</li>
+        <li><code class="inline">-web</code> — HTTP port for the web download page; omit to disable</li>
+    </ul>
+    <p>With web download page (browser, no client):</p>
+    <div class="code-wrap">
+        <code id="cmd-server-web">tcpraw server -port=9999 -dir=./data -web=8080</code>
+        <button type="button" class="copy-btn" data-copy="cmd-server-web">Copy</button>
+    </div>
+    <p>Then open <code class="inline">http://SERVER:8080</code> in your browser and enter the 6-digit code to download. Web download works only for regular “send” uploads; “secure send” files require the client and the key.</p>
+
+    <h2>Other</h2>
+    <p>Running <code class="inline">tcpraw</code> with no arguments or an unknown command shows total free space across all servers from the list.</p>
+
+    <h2>Configuration (main.go)</h2>
+    <p>Edit the variables at the top of <code class="inline">main.go</code> to change defaults. Server list is in <code class="inline">client.go</code> (first digit of code = server id).</p>
+    <table>
+        <thead>
+            <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>(server list)</td><td>in <code class="inline">client.go</code></td><td>Server addresses; first digit of code = id</td></tr>
+            <tr><td><code class="inline">StorageDuration</code></td><td><code class="inline">30 * time.Minute</code></td><td>How long blobs are kept</td></tr>
+            <tr><td><code class="inline">CleanupInterval</code></td><td><code class="inline">5 * time.Minute</code></td><td>How often expired blobs are removed</td></tr>
+            <tr><td><code class="inline">MaxBlobSize</code></td><td>15 GB</td><td>Max size per upload (bytes)</td></tr>
+            <tr><td><code class="inline">RateLimitAttempts</code></td><td>50</td><td>Max code checks per IP per window</td></tr>
+            <tr><td><code class="inline">RateLimitWindow</code></td><td><code class="inline">10 * time.Minute</code></td><td>Rate limit window</td></tr>
+            <tr><td><code class="inline">BanDuration</code></td><td><code class="inline">15 * time.Minute</code></td><td>Ban duration when limit exceeded</td></tr>
+        </tbody>
+    </table>
+</main>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-copy');
+        var el = document.getElementById(id);
+        var text = el ? el.textContent : '';
+        navigator.clipboard.writeText(text).then(function() {
+            btn.classList.add('copied');
+            btn.textContent = 'Copied!';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+});
+</script>
+
+</body>
+</html>

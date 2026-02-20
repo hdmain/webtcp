@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCPRAW Download</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background: #0c1222;
+    color: #e2e8f0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    font-size: 20px;
+    font-weight: 600;
+    border-bottom: 1px solid #1e3a5f;
+    background: #0f172a;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-wrap {
+    position: relative;
+}
+
+.hamburger-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-top: 3px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.hamburger-trigger:hover {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hamburger span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+}
+
+.header-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 6px;
+    min-width: 160px;
+    padding: 8px 0;
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    z-index: 100;
+}
+
+.menu-wrap:hover .header-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.header-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+
+.header-menu a:hover {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+.header-title {
+    color: #e2e8f0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.go-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #7dd3fc;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+    border: 1px solid #334155;
+}
+
+.go-badge:hover {
+    background: #334155;
+    color: #bae6fd;
+}
+
+.go-badge img {
+    display: block;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.about-project {
+    padding: 24px 40px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e3a5f;
+}
+
+.about-inner {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.about-project h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #94a3b8;
+}
+
+.about-project p {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.about-project a {
+    color: #7dd3fc;
+    text-decoration: none;
+}
+
+.about-project a:hover {
+    text-decoration: underline;
+    color: #bae6fd;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.card {
+    background: #0f172a;
+    width: 100%;
+    max-width: 480px;
+    padding: 50px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    border: 1px solid #1e3a5f;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #f1f5f9;
+}
+
+p {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 30px;
+}
+
+input {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    outline: none;
+    text-align: center;
+    transition: 0.2s;
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+input::placeholder {
+    color: #64748b;
+}
+
+input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #3b82f6;
+}
+
+.status {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #94a3b8;
+    min-height: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #64748b;
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="header-left">
+        <div class="menu-wrap">
+            <button type="button" class="hamburger-trigger" aria-label="Menu" aria-expanded="false">
+                <span class="hamburger"><span></span><span></span><span></span></span>
+            </button>
+            <div class="header-menu">
+                <a href="docs.html">Docs</a>
+                <a href="servers.html">Servers</a>
+                <a href="https://github.com/hdmain/rawuploader" target="_blank" rel="noopener">GitHub</a>
+            </div>
+        </div>
+        <span class="header-title">TCPRAW</span>
+    </div>
+    <a href="https://github.com/hdmain/rawuploader" target="_blank" rel="noopener" class="go-badge" title="Backend written in Go">
+        <img src="https://go.dev/images/go-logo-blue.svg" alt="Go" width="32" height="32">
+        <span>Backend in Go</span>
+    </a>
+</header>
+
+<section class="about-project">
+    <div class="about-inner">
+        <h2>About this project</h2>
+        <p><strong>rawuploader</strong> (tcpraw) is a tool for sending and receiving files over TCP using 6-digit access codes. The server and client are written in <strong>Go (Golang)</strong> — the backend is fast, easy to deploy, and has no external dependencies. Files are encrypted on the client side (AES-256-GCM), and the server stores only encrypted data; no sign-up required, just the code.</p>
+        <p><a href="https://github.com/hdmain/rawuploader" target="_blank" rel="noopener">Repository on GitHub →</a></p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="card">
+        <h1>Download from TCPRAW</h1>
+        <p>Enter your 6-digit access code below.</p>
+
+        <input type="text" id="codeInput" placeholder="123456" maxlength="6">
+        <button onclick="downloadFile()">Download</button>
+
+        <div class="status" id="status"></div>
+    </div>
+</div>
+
+<footer>
+    Secure and fast file retrieval
+</footer>
+
+<script>
+const input = document.getElementById("codeInput");
+input.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") downloadFile();
+});
+
+async function downloadFile() {
+    const code = input.value.trim();
+    const status = document.getElementById("status");
+
+    if (!/^\d{6}$/.test(code)) {
+        status.innerText = "Code must be exactly 6 digits.";
+        return;
+    }
+
+    status.innerText = "Fetching server list...";
+
+    try {
+        const response = await fetch("https://raw.githubusercontent.com/hdmain/rawuploader/refs/heads/main/address");
+        const text = await response.text();
+
+        const servers = text
+            .split("\n")
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                const parts = line.split(":");
+                return parts.length >= 2 ? parts[1] : null;
+            })
+            .filter(ip => ip !== null);
+
+        const serverIndex = parseInt(code[0]) - 1;
+
+        if (serverIndex < 0 || serverIndex >= servers.length) {
+            status.innerText = "Invalid server number.";
+            return;
+        }
+
+        const serverIP = servers[serverIndex];
+        const downloadURL = `http://${serverIP}:9998/get?code=${code}`;
+
+        status.innerText = "Opening download...";
+        window.open(downloadURL, "_blank");
+
+    } catch (err) {
+        status.innerText = "Error: " + err.message;
+    }
+}
+</script>
+
+</body>
+</html>
