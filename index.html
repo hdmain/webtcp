@@ -349,7 +349,7 @@ async function downloadFile() {
             })
             .filter(ip => ip !== null);
 
-        const serverIndex = parseInt(code[0]) - 1;
+        const serverIndex = parseInt(code[0], 10);
 
         if (serverIndex < 0 || serverIndex >= servers.length) {
             status.innerText = "Invalid server number.";
