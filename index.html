@@ -319,6 +319,14 @@ footer {
 </footer>
 
 <script>
+// Automatyczne wypełnienie input z parametru ?code=XXXXXX
+const urlParams = new URLSearchParams(window.location.search);
+const initialCode = urlParams.get("code");
+if (initialCode) {
+    document.getElementById("codeInput").value = initialCode;
+    downloadFile(); // automatycznie pobiera
+}
+
 const input = document.getElementById("codeInput");
 input.addEventListener("keypress", function(e) {
     if (e.key === "Enter") downloadFile();
@@ -359,8 +367,15 @@ async function downloadFile() {
         const serverIP = servers[serverIndex];
         const downloadURL = `http://${serverIP}:9998/get?code=${code}`;
 
-        status.innerText = "Opening download...";
-        window.open(downloadURL, "_blank");
+        // Tworzymy tymczasowy link do pobrania
+        const a = document.createElement("a");
+        a.href = downloadURL;
+        a.download = ""; // wymusza pobranie
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        status.innerText = "Download started...";
 
     } catch (err) {
         status.innerText = "Error: " + err.message;
